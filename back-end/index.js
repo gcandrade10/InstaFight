@@ -24,13 +24,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 MongoClient.connect(DB_URI, function(err, database) 
 {  
     assert.equal(null, err);
-    mongodb=database.db(dbName).collection("prueba");
+    mongodb=database.db(dbName).collection("figths");
     //console.log(mongodb.find());
     console.log("Mongo está corriendo");
 	app.listen(port);
 	console.log(" listening on " +port);
     }
-); 
+);
+
+app.get("/api/registrar/:winner/:loser",(req,res)=>{
+	insert(mongodb, req.params.winner, req.params.loser, ()=>res.send("ok"));
+});
 
 app.get("/api/user/:user",(req,res)=>
 {
@@ -50,9 +54,11 @@ app.get("/api/user/:user",(req,res)=>
 							var fullName =likes.user.full_name;
 							var user={
 
-								count:count, username:username,
+								count:count, 
+								username:username,
 								fullName:fullName, 
-								profilePic:likes.user.profile_pic_url
+								profilePic:likes.user.profile_pic_url,
+								profile:"https://www.instagram.com/"+username
 							};
 							res.json(user)
 						})
@@ -92,10 +98,15 @@ const findDocuments=function(db,callback)
 };
 
 
-const insert=function(db, user, score, callback)
+const insert=function(db, winner, loser, callback)
 {
-	var scoreObj={user:user, score:parseInt(score,10)};
-	mongodb.insertOne(scoreObj, (err, res)=>
+	var date =new Date();
+	var scoreObj=
+	{
+		date:date.toString(),
+		winner:winner, 
+		loser:loser};
+	db.insertOne(scoreObj, (err, res)=>
 	{
 		if (err) throw err;
 	    console.log("1 document inserted");

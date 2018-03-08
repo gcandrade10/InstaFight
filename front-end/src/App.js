@@ -7,6 +7,8 @@ class App extends Component {
 	{
 		super(props);
 		this.state={
+			f1:null,
+			f2:null,
 			winner:null,
 			loser:null
 		};
@@ -20,14 +22,46 @@ class App extends Component {
 		this.setState({followers:temp});
 	}
 
+	renderWinner()
+	{
+		if (this.state.f1 && this.state.f2)
+		{
+		var winner = this.state.f1.count>this.state.f2.count?this.state.f1:this.state.f2
+		var loser = this.state.f1.count>this.state.f2.count?this.state.f2:this.state.f1
+		fetch("/api/registrar/"+winner.username+"/"+loser.username)
+		return <Followers winner={winner} what="Wineeer"/>
+		}
+		else
+		{
+			return ""
+		}
+	}
+
+	renderLoser()
+	{
+		if (this.state.f1 && this.state.f2)
+		{
+		var retorno = this.state.f1.count>this.state.f2.count?this.state.f2:this.state.f1
+		return <Followers winner={retorno} what="Looseeer"/>
+		}
+		else
+		{
+			return ""
+		}
+	}
+
 
   render() {
     return (
       <div className="container">
     		<h1 className="row justify-content-center">Insta Fight</h1>
+
+    		
+
+    		
 	    	<div className="row user-search-input justify-content-center">
-	    		
-		        <input className="col-4" placeholder="Username to search"  type='text' onKeyPress={(evento)=>{
+  
+		        <input className="col-4" placeholder="Username to search (hit enter)"  type='text' onKeyPress={(evento)=>{
 		        	const keyCode = evento.keyCode || evento.which;
 		        	if(keyCode===13)
 		        	{
@@ -38,29 +72,15 @@ class App extends Component {
 						return res.json();
 						})
 						.then((json)=>{
-							console.log("State A: "+JSON.stringify(this.state));
+							
+							this.setState({f1:json});
 
-							console.log("json A: "+JSON.stringify(json));
-							if(this.state.winner===null)
-							{
-							this.setState({winner:json});
-
-							}
-							else if(json.count>this.state.winner.count)
-							{
-							this.setState({loser:this.state.winner});
-							this.setState({winner:json});
-							}
-							else
-							{
-								this.setState({loser:json});
-							}
-							console.log("State A: "+JSON.stringify(this.state));
 							
 						})
 		        	}
 		        }}/>
-		        <input className="col-4" placeholder="Username to search"  type='text' onKeyPress={(evento)=>{
+		        <span> VS </span>
+		        <input className="col-4" placeholder="Username to search (hit enter)"  type='text' onKeyPress={(evento)=>{
 		        	const keyCode = evento.keyCode || evento.which;
 		        	if(keyCode===13)
 		        	{
@@ -71,39 +91,17 @@ class App extends Component {
 						return res.json();
 						})
 						.then((json)=>{
-							console.log("json B: "+JSON.stringify(json));
-							if(this.state.winner===null)
-							{
-							this.setState({winner:json});
-							}
-							else if(json.count>this.state.winner.count)
-							{
-							this.setState({loser:this.state.winner});
-							this.setState({winner:json});
-							}
-							else
-							{
-								this.setState({loser:json});
-							}
-							console.log("State A: "+JSON.stringify(this.state));
+							this.setState({f2:json});
 						})
 		        	}
 		        }}/>
-		        <span className="input-group-addon col-1 justify-content-center">
-	                            <i className="fa fa-search form-control-feedback"/>
-	            </span>
+		        
 	    	</div>
 	    	<div className="row justify-content-center ">
-	            <button onClick={this.sortFollowers.bind(this)} type="button" className="btn-info">Sort</button>
-	    	</div>
-	    	{/*console.log("this.state: "+this.state.followers.length)
 
-	    	*/
-	    	}
-	    	{
-	    		this.state.winner?<Followers followers={this.state.winner}/>
-	    	}
-	    	
+	    	{this.renderWinner()}
+	    	{this.renderLoser()}
+	    	</div>
 	    	
       </div>
     );

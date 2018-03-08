@@ -5,23 +5,32 @@ class Followers extends Component {
 	{
 		super(props);
 		this.state={
-			winner:props.winner
-		};
+			winner:props.winner,
+      what:props.what
+		}
 	}
   render() {
+
+    {console.log("json"+JSON.stringify(this.state))}
     return(
-        <div>
-          
-        <div className="col-3" key={this.winner.username}>
-                    {console.log(this.winner)}
-                    <h1>Winner</h1>
-                    <a target="_blank" href={this.winner.profile}>
-                        <img className="imgFollower" src={this.winner.profilePic} alt="winner image"/>
-                    </a>
-                    {this.winner.username}
-                </div>
-        </div>
+  
+        <div className="col-5" key={this.props.winner.username}>
         
+                    <h1>{this.props.what}</h1>
+                    <a target="_blank" href={this.props.winner.profile}>
+                        <img className="imgFollower" src={this.props.winner.profilePic} alt="winner image"/>
+                    </a>
+                    <h2>
+                      {this.props.winner.username}
+                    </h2>
+                    <h2>
+                      
+                    {this.props.winner.fullName}
+                    </h2>
+                    <h2>
+                    {this.props.winner.count} Votes
+                    </h2>
+                </div>
       
       )
   }
