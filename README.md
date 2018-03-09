@@ -28,3 +28,10 @@ db.createCollection("figths")
 ```
 run npm start in the /backend folder  
 run npm start in the /frontend folder  
+## Contributing
+If anyone wants to give me any help or ideas, you can by making new [Issues](https://github.com/gcandrade10/InstaFight/issues) or a [Pull requests](https://github.com/gcandrade10/InstaFight/compare).
+
+## License
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This repository has the standard MIT license. You can find it [here.](https://github.com/gcandrade10/InstaFight/blob/master/LICENSE)
