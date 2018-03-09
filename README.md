@@ -23,7 +23,8 @@ You must create a mongodb collection named figths
 db.createCollection("top") 
 ```
 You must create a mongodb collection named top  
+```
 db.createCollection("figths")
-
+```
 run npm start in the /backend folder  
 run npm start in the /frontend folder  
