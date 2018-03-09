@@ -7,6 +7,9 @@ This project was developed as part of
 ## Author:
 [Germán Andrade](https://gcandrade10.github.io/)
 
+## Demo:
+[https://insta--fight.herokuapp.com](https://insta--fight.herokuapp.com)
+
 ## Exam's "Secret Sauce":
 You can check the top searched users.
 You can see the profile pic of the user and if you click it it will let you go to see their profile
