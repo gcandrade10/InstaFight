@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Followers from "./Followers";
 class App extends Component {
@@ -29,6 +28,8 @@ class App extends Component {
 		var winner = this.state.f1.count>this.state.f2.count?this.state.f1:this.state.f2
 		var loser = this.state.f1.count>this.state.f2.count?this.state.f2:this.state.f1
 		fetch("/api/registrar/"+winner.username+"/"+loser.username)
+		fetch("/api/top/"+winner.username);
+		fetch("/api/top/"+loser.username);
 		return <Followers winner={winner} what="Wineeer"/>
 		}
 		else
@@ -76,7 +77,7 @@ class App extends Component {
 							this.setState({f1:json});
 
 							
-						})
+						}).catch((err)=>alert("No Existe o es privado "+value))
 		        	}
 		        }}/>
 		        <span> VS </span>

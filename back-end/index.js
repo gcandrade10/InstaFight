@@ -5,14 +5,10 @@ var MongoClient = require("mongodb").MongoClient
 const assert = require("assert");
 const fetch= require("node-fetch");
 /*
+*/
 const dbName=process.env.DB_NAME;
 const DB_URI=process.env.MONGODB_URI;
-*/
 const port = process.env.PORT || 5000;
-
-const dbName="prueba"
-const DB_URI="mongodb://localhost:27017/"+dbName;
-
 
 const app = express();
 
@@ -25,6 +21,7 @@ MongoClient.connect(DB_URI, function(err, database)
 {  
     assert.equal(null, err);
     mongodb=database.db(dbName).collection("figths");
+    topdb=database.db(dbName).collection("top");
     //console.log(mongodb.find());
     console.log("Mongo está corriendo");
 	app.listen(port);
@@ -61,11 +58,11 @@ app.get("/api/user/:user",(req,res)=>
 								profile:"https://www.instagram.com/"+username
 							};
 							res.json(user)
-						})
+						}).catch((err)=>res.send("No Existe o es privado "+req.params.user))
 		
 });
 
-function find(callback)
+function findA(callback)
 {
 	mongodb.find().toArray((err,docs)=>{
 	assert.equal(null,err);
@@ -73,23 +70,38 @@ function find(callback)
 	});
 }
 
+
 app.get("/api/find", (req, res) => 
+{
+ 	findA((docs)=>{
+		res.send(docs);
+	});
+});
+
+function find(callback)
+{
+	topdb.find().sort( { count: -1 } ).limit(10).toArray((err,docs)=>{
+	assert.equal(null,err);
+		callback(docs);	
+	});
+}
+
+app.get("/api/findTopUsers", (req, res) => 
 {
  	find((docs)=>{
 		res.send(docs);
 	});
 });
-
-
+/*
 function getTopTen(callback)
 {
 	findDocuments(mongodb,callback);
 }
+*/
 
-
-const findDocuments=function(db,callback)
+const getCount=function(user,callback)
 {
-	mongodb.find().sort( { score: -1 } ).limit(10).toArray(function(err,docs)
+	topdb.find({user:user}).toArray(function(err,docs)
 	{
 
 		assert.equal(null,err);
@@ -97,6 +109,63 @@ const findDocuments=function(db,callback)
 	});
 };
 
+
+app.get("/api/top/:user", (req, res) => {
+	getCount(req.params.user,(docs)=>{
+
+		if(docs.length===0)
+		{
+
+			/*
+			No existe
+			*/
+			insertSingle(req.params.user,()=>
+			{
+			res.send("ok");	
+		 	});
+		}
+		else
+		{
+			console.log(docs);
+			pistas = docs[0].count;
+			pistas++;
+
+			console.log("ahora hay "+pistas);
+			if(pistas<=4)
+			update(req.params.user,pistas,()=>
+			{
+			res.send("ok");	
+		 	});
+			
+		}
+	});	
+});
+
+const update = function(user,pistas, callback)
+{	
+	var myquery = { user: user };
+  	var newvalues = { $set: {count: pistas } };
+  	topdb.updateOne(myquery, newvalues, function(err, res) {
+    if (err) throw err;
+    console.log("1 document updated");
+    callback(pistas);
+  });
+}
+
+const insertSingle=function( winner, callback)
+{
+	var date =new Date();
+	var scoreObj=
+	{
+		user:winner, 
+		count:1};
+	topdb.insertOne(scoreObj, (err, res)=>
+	{
+		if (err) throw err;
+	    console.log("1 user updated");
+		callback("Done!");
+	});
+};
 
 const insert=function(db, winner, loser, callback)
 {
