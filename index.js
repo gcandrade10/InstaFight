@@ -131,7 +131,6 @@ app.get("/api/top/:user", (req, res) => {
 			pistas++;
 
 			console.log("ahora hay "+pistas);
-			if(pistas<=4)
 			update(req.params.user,pistas,()=>
 			{
 			res.send("ok");	
